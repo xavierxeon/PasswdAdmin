@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+
+import sys, getpass
+from lib import Settings, UserManager
+from xxpystuff.tools import Console, JSONSettings
+
+
+class PasswdAdmin:
+
+    def __init__(self):
+
+        self._settings = Settings()
+        try:
+            self._settings.load()
+        except JSONSettings.SettingsError as e:
+            print(e)
+            sys.exit()
+
+    def addUser(self, name):
+
+        if not name:
+            print(Console.red('ADD USER ERROR: ') + Console.yellow('username not given'))
+            sys.exit()
+
+        pwd1 = getpass.getpass(prompt='type password: ', stream=None)
+        if not pwd1:
+            print(Console.red('password must not be empty'))
+            sys.exit()
+
+        pwd2 = getpass.getpass(prompt='repeat password: ', stream=None)
+        if pwd1 != pwd2:
+            print(Console.red('passwords do not match'))
+            sys.exit()
+
+        userManager = UserManager(self._settings)
+        userManager.addUser(name, pwd1)
+
+    def removeUser(self, name):
+
+        if not name:
+            print(Console.red('REMOVE USER ERROR: ') + Console.yellow('username not given'))
+            sys.exit()
+
+        userManager = UserManager(self._settings)
+        userManager.removeUser(name)
+
+    @staticmethod
+    def printHelp():
+        
+        print(Console.blue('passwdadmin'))
+        print(Console.yellow('* add <username>:') + ' create user or change password of user')
+        print(Console.yellow('* remove <username>:') + ' remove given user')
+        print(Console.yellow('* gui:') + ' show the gui')  
+
+def main():
+    
+    if len(sys.argv) < 2:    
+        PasswdAdmin.printHelp()
+        sys.exit()
+    else:  
+        command = sys.argv[1]
+
+    if len(sys.argv) > 2:
+        argument = sys.argv[2]
+    else:
+        argument = None
+
+    if command == 'add':
+        passwdAdmin = PasswdAdmin()
+        passwdAdmin.addUser(argument)
+    elif command == 'remove':
+        passwdAdmin = PasswdAdmin()
+        passwdAdmin.removeUser(argument)
+    elif command == 'gui':
+        from lib.gui import startGui
+        startGui()
+    else:
+        PasswdAdmin.printHelp()
+
+if __name__ == '__main__':
+    main()        
