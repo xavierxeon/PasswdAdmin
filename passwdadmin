@@ -32,7 +32,7 @@ class PasswdAdmin:
             print(Console.red('passwords do not match'))
             sys.exit()
 
-        userManager = UserManager(self._settings)
+        userManager = UserManager()
         userManager.addUser(name, pwd1)
 
     def removeUser(self, name):
@@ -41,7 +41,7 @@ class PasswdAdmin:
             print(Console.red('REMOVE USER ERROR: ') + Console.yellow('username not given'))
             sys.exit()
 
-        userManager = UserManager(self._settings)
+        userManager = UserManager()
         userManager.removeUser(name)
 
     @staticmethod

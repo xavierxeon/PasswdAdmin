@@ -5,6 +5,8 @@ from xxpystuff.tools import Console, JSONSettings
 
 class Settings(JSONSettings):
 
+    the = None
+
     _fileName = 'passwdadmin.json'
     _template = {
         'pwd_file': ''
@@ -13,6 +15,7 @@ class Settings(JSONSettings):
     def __init__(self):
 
         JSONSettings.__init__(self, self._fileName, self._template)
+        Settings.the = self
 
     def load(self):
 

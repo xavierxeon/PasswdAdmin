@@ -2,16 +2,17 @@
 
 import os
 from xxpystuff.tools import Process
+from .settings import Settings
 
 class UserManager:
 
-    def __init__(self, settings):
+    def __init__(self):
 
-        self._settings = settings
+        pass
 
     def addUser(self, name, passwd):
 
-        fileName = self._settings.getPasswordFileName()        
+        fileName = Settings.the.getPasswordFileName()        
         
         argList = ['-b']
         if not os.path.exists(fileName):
@@ -27,7 +28,7 @@ class UserManager:
         
     def removeUser(self, name):
 
-        fileName = self._settings.getPasswordFileName()
+        fileName = Settings.the.getPasswordFileName()
         if not os.path.exists(fileName):
             return
 

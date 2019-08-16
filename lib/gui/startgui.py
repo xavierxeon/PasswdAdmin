@@ -5,15 +5,13 @@ import os, sys, signal
 # pylint: disable=no-name-in-module
 from PySide2.QtCore import QTimer
 from PySide2.QtGui import QGuiApplication
-from PySide2.QtQml import QQmlApplicationEngine 
+from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 # pylint: disable=no-name-in-module
 
 from xxpystuff.tools import JSONSettings
 
 from ..settings import Settings
-
-#from .interface import Interface
-#from .usermodel import UserModel
+from .usermodel import UserModel
 
 def signit_handler(*args):
 
@@ -29,19 +27,21 @@ def startGui():
         quit()
 
     app = QGuiApplication([])
+    app.setOrganizationName('Schweinesystem')
+    app.setOrganizationDomain('schweinesystem.eu')
+    app.setApplicationName('PasswdAdmin')
+    
     signal.signal(signal.SIGINT, signit_handler)
-
     timer = QTimer()
     timer.start(500)  # You may change this if you wish.
     timer.timeout.connect(lambda: None)  # Let the interpreter run each 500 ms.
 
     engine = QQmlApplicationEngine()
 
-    """
-    interface = Interface(settings, certCA, usermodel)
-    context = engine.rootContext()
-    context.setContextProperty("PyInterface", interface)
-    context.setContextProperty("userModel", usermodel)
+    usermodel = UserModel(settings)
+
+    context = engine.rootContext()    
+    context.setContextProperty('userModel', usermodel)
 
     thisFile = os.path.realpath(__file__)
     thisDir = os.path.dirname(thisFile)
@@ -50,8 +50,6 @@ def startGui():
         sys.exit(-1)
 
     sys.exit(app.exec_())
-    """
-    sys.exit()
 
 if __name__ == '__main__':
     startGui()   
