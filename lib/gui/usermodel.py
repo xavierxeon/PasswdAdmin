@@ -1,94 +1,95 @@
 #!/user/bin/env python3
 
 import os
-# pylint: disable=E0611
-from PySide2.QtCore import Qt, QByteArray, QAbstractListModel, Slot
-# pylint: enable=E0611
+
+from PySide6.QtCore import Qt, QByteArray, QAbstractListModel, Slot
+
 
 from ..settings import Settings
 from ..usermanager import UserManager
 
+
 class UserModel(QAbstractListModel):
 
-    RoleName = Qt.UserRole + 1
+   RoleName = Qt.UserRole + 1
 
-    def __init__(self, settings):
+   def __init__(self, settings):
 
-        QAbstractListModel.__init__(self)
-        self.settings = settings
+      QAbstractListModel.__init__(self)
+      self.settings = settings
 
-        self._nameList = list()
-        self.load()
+      self._nameList = list()
+      self.load()
 
-    def roleNames(self):
+   def roleNames(self):
 
-        roles = {
-            UserModel.RoleName: QByteArray(b'name')
-        }
+      roles = {
+          UserModel.RoleName: QByteArray(b'name')
+      }
 
-        return roles
+      return roles
 
-    def rowCount(self, index):
+   def rowCount(self, index):
 
-        rowCount = len(self._nameList)
-        return rowCount
+      rowCount = len(self._nameList)
+      return rowCount
 
-    def data(self, index, role):
+   def data(self, index, role):
 
-        if not index.isValid():
-            return None
+      if not index.isValid():
+         return None
 
-        row = index.row()
-        if row > len(self._nameList):
-            return None
+      row = index.row()
+      if row >= len(self._nameList):
+         return None
 
-        if role == UserModel.RoleName:
-            return self._nameList[row]
-        
-        return None
+      if role == UserModel.RoleName:
+         return self._nameList[row]
 
-    def load(self):
+      return None
 
-        self.beginResetModel()
-        self._nameList.clear()
+   def load(self):
 
-        fileName = Settings.the.getPasswordFileName()
-        if not fileName or not os.path.exists(fileName):
-            self.endResetModel()
-            return                
+      self.beginResetModel()
+      self._nameList.clear()
 
-        with open(fileName, 'r') as infile:
-            for line in infile:
-                line = line.strip()
-                if not line:
-                     continue
-                index = line.index(':')
-                name = line[: index]
-                self._nameList.append(name)
+      fileName = Settings.the.getPasswordFileName()
+      if not fileName or not os.path.exists(fileName):
+         self.endResetModel()
+         return
 
-        self._nameList.sort()
-        self.endResetModel()
+      with open(fileName, 'r') as infile:
+         for line in infile:
+            line = line.strip()
+            if not line:
+               continue
+            index = line.index(':')
+            name = line[: index]
+            self._nameList.append(name)
 
-    @Slot(int, result = str)
-    def getName(self, row):
+      self._nameList.sort()
+      self.endResetModel()
 
-        if row > len(self._nameList):
-            return None
+   @Slot(int, result=str)
+   def getName(self, row):
 
-        return self._nameList[row]
+      if row >= len(self._nameList):
+         return None
 
-    @Slot(str, str, result = None)
-    def addUser(self, name, passwd):
-              
-        userManager = UserManager()
-        userManager.addUser(name, passwd)
+      return self._nameList[row]
 
-        self.load()
+   @Slot(str, str, result=None)
+   def addUser(self, name, passwd):
 
-    @Slot(str, result = None)
-    def removeUser(self, name):
-              
-        userManager = UserManager()
-        userManager.removeUser(name)
+      userManager = UserManager()
+      userManager.addUser(name, passwd)
 
-        self.load()
+      self.load()
+
+   @Slot(str, result=None)
+   def removeUser(self, name):
+
+      userManager = UserManager()
+      userManager.removeUser(name)
+
+      self.load()

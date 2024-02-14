@@ -1,7 +1,7 @@
-import QtQuick 2.11
-import QtQuick.Window 2.2
-import QtQuick.Layouts 1.11
-import Qt.labs.settings 1.0
+import QtQuick 
+import QtQuick.Window 
+import QtQuick.Layouts 
+import QtCore
 
 Window 
 {
